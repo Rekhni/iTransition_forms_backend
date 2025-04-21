@@ -113,7 +113,7 @@ export const searchTemplatesByTag = async (req, res) => {
 
     try {
         const [fulltextResults] = await db.sequelize.query(
-            `SELECT * FROM templates WHERE MATCH(tags) AGAINST(:query IN BOOLEAN MODE)`,
+            `SELECT * FROM Templates WHERE MATCH(tags) AGAINST(:query IN BOOLEAN MODE)`,
             {
                 replacements: { query: `${query}*` },
                 type: db.sequelize.QueryTypes.SELECT
