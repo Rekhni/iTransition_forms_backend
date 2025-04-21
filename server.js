@@ -25,7 +25,7 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/users', userRoutes);
 
 
-const PORT = process.env.PORT || 5002;
+const PORT = process.env.DB_PORT || 5002;
 
 db.sequelize.sync().then(() => {
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
