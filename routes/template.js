@@ -1,5 +1,5 @@
 import express from 'express';
-import { createTemplate, getUserTemplates, getTemplateById, getAllTemplates, updateTemplate, searchTemplatesByTag } from '../controllers/templateController.js';
+import { createTemplate, getUserTemplates, getTemplateById, getAllTemplates, updateTemplate, searchTemplatesByTag, deleteTemplate } from '../controllers/templateController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 
@@ -12,6 +12,7 @@ router.get('/search', protect, searchTemplatesByTag);
 router.get('/:id', getTemplateById);
 router.get('/', getAllTemplates); // for unauthenticated users
 router.put('/:id', protect, updateTemplate);
+router.delete('/:id', protect, deleteTemplate);
 
 
 export default router;

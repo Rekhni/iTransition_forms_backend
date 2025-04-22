@@ -140,3 +140,21 @@ export const searchTemplatesByTag = async (req, res) => {
     }
 };
 
+export const deleteTemplate = async (req, res) => {
+    const { id } = req.params;
+    const user = req.user;
+
+    try {
+        const template = await Template.findByPk(id);
+
+        if (!template) return res.status(404).json({ msg: 'Template not found' });
+
+        await template.destroy();
+        res.json({ msg: 'Template deleted' });
+        
+    } catch(err) {
+        console.error('Failed to delete template:', err);
+        res.status(500).json({ msg: 'Server error' });
+    }
+}
+
