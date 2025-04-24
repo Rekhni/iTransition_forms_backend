@@ -69,57 +69,47 @@ export const getAllTemplates = async (req, res) => {
 
       if (req.user?.role === 'admin') {
         const templates = await Template.findAll({
-            order: [['createdAt', 'DESC']]
+            order: [['createdAt', 'DESC']],
+            include: [
+                { model: User, as: 'allowedUsers', through: { attributes: [] } },
+              ]
           });
         return res.json(templates);
       }
 
       if (userId) {
-        const publicAndOwnTemplates = await Template.findAll({
+        const templates = await Template.findAll({
             where: {
                 [Op.or]: [
                     { isPublic: true },
                     { userId },
                 ]
             },
-            order: [['createdAt', 'DESC']]
-        });
-
-        const allowedTemplates = await Template.findAll({
             include: [
                 {
-                    model: User,
-                    as: 'allowedUsers',
-                    where: { id: userId },
-                    required: false,
-                    through: { attributes: [] },
+                  model: User,
+                  as: 'allowedUsers',
+                  through: { attributes: [] },
                 }
-            ],
-            where: {
-                isPublic: false
-            },
+              ],
             order: [['createdAt', 'DESC']]
         });
 
-        const allTemplates = [
-            ...publicAndOwnTemplates,
-            ...allowedTemplates.filter(
-              t => !publicAndOwnTemplates.some(pt => pt.id === t.id)
-            )
-          ];
+        const visibleTemplates = templates.filter(t =>
+            t.isPublic || t.userId === userId || t.allowedUsers.some(u => u.id === userId)
+          );
 
-        return res.json(allTemplates);
+          return res.json(visibleTemplates);
+
 
       }
 
-      const templates = await Template.findAll({
-        where: {
-            isPublic: true
-        },
+      const publicTemplates = await Template.findAll({
+        where: { isPublic: true },
         order: [['createdAt', 'DESC']]
       });
 
-        return res.json(templates);
+      return res.json(publicTemplates);
 
     } catch (err) {
       console.error('Error fetching all templates:', err);
