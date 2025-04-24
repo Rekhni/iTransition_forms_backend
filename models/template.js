@@ -24,6 +24,10 @@ const Template = sequelize.define('Template', {
         type: DataTypes.TEXT,
         allowNull: true
     }, 
+    isPublic: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    }
 }, {
     timestamps: true
 });

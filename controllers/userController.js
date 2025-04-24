@@ -87,3 +87,26 @@ export const toggleAdminStatus = async (req, res) => {
         res.status(500).json({ msg: 'Failed to toggle admin status' })
     }
 }
+
+export const autoCompleteUsers = async (req, res) => {
+    const { query } = req.query;
+
+    if (!query) return res.status(404).json({ msg: 'Missing query param' });
+
+    try {
+        const users = await User.findAll({
+            where: {
+                [Op.or]: [
+                    { name: { [Op.like]: `%${query}%` } },
+                    { email: { [Op.like]: `%${query}%` } }
+                ]
+            },
+            attributes: ['id', 'name', 'email']
+        })
+
+        res.json(users);
+    } catch (err) {
+        console.error("Autocomplete error:", err);
+        res.status(500).json({ msg: "Autocomplete failed" });
+    }
+}

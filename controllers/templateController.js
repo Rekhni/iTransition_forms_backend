@@ -4,7 +4,7 @@ import { Op } from "sequelize";
 const Template = db.Template;
 
 export const createTemplate = async (req, res) => {
-    const { title, description, topic, tags, imageUrl } = req.body;
+    const { title, description, topic, tags, imageUrl, isPublic, allowedUserIds = [] } = req.body;
 
     try {
         const template = await Template.create({
@@ -13,18 +13,23 @@ export const createTemplate = async (req, res) => {
             topic,
             tags: tags.join(", "),
             imageUrl,
-            userId: req.user.id
+            userId: req.user.id,
+            isPublic,
         });
 
+        if (!isPublic && Array.isArray(allowedUserIds)) {
+            const accessEntries = allowedUserIds.map((userId) => ({
+              templateId: template.id,
+              userId,
+            }));
+      
+            await TemplateAccess.bulkCreate(accessEntries);
+          }
 
         res.status(201).json(template);
     } catch(err) {
         console.error('❌ Template creation failed:', err);
-        res.status(500).json({
-          msg: 'Template creation failed',
-          error: err.message,
-          stack: err.stack
-        });
+        res.status(500).json({ msg: 'Template creation failed' });
     }
 };
 

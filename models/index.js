@@ -6,6 +6,7 @@ import Form from "./form.js";
 import Answer from "./answer.js";
 import Like from "./like.js";
 import Comment from "./comment.js";
+import TemplateAccess from "./templateAccess.js";
 
 User.hasMany(Template, { foreignKey: 'userId', as: 'templates' });
 Template.belongsTo(User, { foreignKey: 'userId', as: 'author' }); // only once!
@@ -39,6 +40,9 @@ Template.hasMany(Like, { foreignKey: 'templateId' });
 
 Like.belongsTo(User, { foreignKey: 'userId' });
 Like.belongsTo(Template, { foreignKey: 'templateId' });
+
+Template.belongsToMany(User, { through: TemplateAccess, foreignKey: 'templateId' });
+User.belongsToMany(Template, { through: TemplateAccess, foreignKey: 'userId' });
 
 const db = {
     sequelize,
