@@ -73,16 +73,18 @@ export const getAllTemplates = async (req, res) => {
         return res.json(templates);
       }
 
-      let templates;
-
       if (userId) {
-        templates = await Template.findAll({
+        const publicAndOwnTemplates = await Template.findAll({
             where: {
                 [Op.or]: [
                     { isPublic: true },
                     { userId },
                 ]
             },
+            order: [['createdAt', 'DESC']]
+        });
+
+        const allowedTemplates = await Template.findAll({
             include: [
                 {
                     model: User,
@@ -92,24 +94,31 @@ export const getAllTemplates = async (req, res) => {
                     through: { attributes: [] },
                 }
             ],
-            order: [['createdAt', 'DESC']]
-        });
-
-        const filtered = templates.filter(t => 
-            t.isPublic || t.userId === userId || t.allowedUsers?.some(u => u.id === userId)
-        );
-
-        return res.json(filtered);
-      } else {
-        templates = await Template.findAll({
             where: {
-                isPublic: true
+                isPublic: false
             },
             order: [['createdAt', 'DESC']]
         });
 
-        return res.json(templates);
+        const allTemplates = [
+            ...publicAndOwnTemplates,
+            ...allowedTemplates.filter(
+              t => !publicAndOwnTemplates.some(pt => pt.id === t.id)
+            )
+          ];
+
+        return res.json(allTemplates);
+
       }
+
+      const templates = await Template.findAll({
+        where: {
+            isPublic: true
+        },
+        order: [['createdAt', 'DESC']]
+      });
+
+        return res.json(templates);
 
     } catch (err) {
       console.error('Error fetching all templates:', err);
