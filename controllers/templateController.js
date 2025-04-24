@@ -3,6 +3,7 @@ import { Op } from "sequelize";
 
 const Template = db.Template;
 const TemplateAccess = db.TemplateAccess;
+const User = db.User;
 
 export const createTemplate = async (req, res) => {
     const { title, description, topic, tags, imageUrl, isPublic, allowedUserIds = [] } = req.body;
