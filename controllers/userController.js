@@ -1,4 +1,5 @@
 import db from "../models/index.js";
+import { Op, literal } from 'sequelize';
 
 const User = db.User;
 
@@ -19,13 +20,26 @@ export const toggleBlockStatus = async (req, res) => {
 
     if (!Array.isArray(userIds)) return res.status(400).json({ msg: 'userIds must be an array' });
     try {
-        const users = await User.findAll({
-            where: { id: userIds }
-        });
-        for (const user of users) {
-            user.isBlocked = !user.isBlocked;
-            await user.save();
-        }  
+        // const users = await User.findAll({
+        //     where: { id: userIds }
+        // });
+        // for (const user of users) {
+        //     user.isBlocked = !user.isBlocked;
+        //     await user.save();
+        // }  
+
+        await User.update(
+            {
+                isBlocked: literal(`NOT isBLocked`)
+            },
+            {
+                where: {
+                    id: {
+                        [Op.in]: userIds
+                    }
+                }
+            }
+        )
 
         res.json({ msg: "Block status toggled" });
     } catch(err) {
@@ -54,14 +68,18 @@ export const toggleAdminStatus = async (req, res) => {
     if (!Array.isArray(userIds)) return res.status(404).json({ msg: "userIds must be an array" })
 
     try {   
-        const users = await User.findAll({
-            where: { id: userIds }
-        });
-
-        for (const user of users) {
-            user.role = user.role === 'admin' ? 'user' : 'admin';
-            await user.save();
-        }
+        await User.update(
+            {
+                role: literal(`CASE WHEN role = 'admin THEN 'user' ELSE 'admin' END`)
+            },
+            {
+                where: {
+                    id: {
+                        [Op.in]: userIds
+                    }
+                }
+            }
+        );
 
         res.json({ msg: "Admin status toggled" });
     } catch(err) {
