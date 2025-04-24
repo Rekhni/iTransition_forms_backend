@@ -24,6 +24,10 @@ const Template = sequelize.define('Template', {
         type: DataTypes.TEXT,
         allowNull: true
     }, 
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
     isPublic: {
         type: DataTypes.BOOLEAN,
         defaultValue: true
