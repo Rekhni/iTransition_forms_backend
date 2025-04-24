@@ -70,7 +70,7 @@ export const getAllTemplates = async (req, res) => {
         const templates = await Template.findAll({
             order: [['createdAt', 'DESC']]
           });
-        res.json(templates);
+        return res.json(templates);
       }
 
       let templates;
