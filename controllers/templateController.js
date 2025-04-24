@@ -64,11 +64,53 @@ export const getTemplateById = async (req, res) => {
 
 export const getAllTemplates = async (req, res) => {
     try {
-      const templates = await Template.findAll({
-        order: [['createdAt', 'DESC']]
-      });
-  
-      res.json(templates);
+      const userId = req.user?.id;
+
+      if (req.user?.role === 'admin') {
+        const templates = await Template.findAll({
+            order: [['createdAt', 'DESC']]
+          });
+        res.json(templates);
+      }
+
+      let templates;
+
+      if (userId) {
+        templates = await Template.findAll({
+            where: {
+                [Op.or]: [
+                    { isPublic: true },
+                    { userId },
+                ]
+            },
+            include: [
+                {
+                    model: User,
+                    as: 'allowedUsers',
+                    where: { id: userId },
+                    required: false,
+                    through: { attributes: [] },
+                }
+            ],
+            order: [['createdAt', 'DESC']]
+        });
+
+        const filtered = templates.filter(t => 
+            t.isPublic || t.userId === userId || t.allowedUsers?.some(u => u.id === userId)
+        );
+
+        return res.json(filtered);
+      } else {
+        templates = await Template.findAll({
+            where: {
+                isPublic: true
+            },
+            order: [['createdAt', 'DESC']]
+        });
+
+        return res.json(templates);
+      }
+
     } catch (err) {
       console.error('Error fetching all templates:', err);
       res.status(500).json({ msg: 'Failed to fetch templates' });
