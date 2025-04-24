@@ -41,8 +41,8 @@ Template.hasMany(Like, { foreignKey: 'templateId' });
 Like.belongsTo(User, { foreignKey: 'userId' });
 Like.belongsTo(Template, { foreignKey: 'templateId' });
 
-Template.belongsToMany(User, { through: TemplateAccess, foreignKey: 'templateId' });
-User.belongsToMany(Template, { through: TemplateAccess, foreignKey: 'userId' });
+Template.belongsToMany(User, { through: TemplateAccess, foreignKey: 'templateId', as: 'allowedUsers' });
+User.belongsToMany(Template, { through: TemplateAccess, foreignKey: 'userId', as: 'accessibleTemplates' });
 
 const db = {
     sequelize,
