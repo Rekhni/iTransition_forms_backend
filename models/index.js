@@ -52,7 +52,8 @@ const db = {
     Form,
     Answer,
     Like,
-    Comment
+    Comment,
+    TemplateAccess
 };
 
 export default db;

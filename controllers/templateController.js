@@ -2,6 +2,7 @@ import db from "../models/index.js";
 import { Op } from "sequelize";
 
 const Template = db.Template;
+const TemplateAccess = db.TemplateAccess;
 
 export const createTemplate = async (req, res) => {
     const { title, description, topic, tags, imageUrl, isPublic, allowedUserIds = [] } = req.body;
