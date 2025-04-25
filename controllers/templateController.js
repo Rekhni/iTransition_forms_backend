@@ -97,7 +97,7 @@ export const getAllTemplates = async (req, res) => {
                 model: User,
                 as: 'allowedUsers',
                 where: { id: userId },
-                required: true,
+                required: false,
                 through: { attributes: [] },
               },
               { model: User, as: 'author', attributes: ['id', 'name', 'email'] },
