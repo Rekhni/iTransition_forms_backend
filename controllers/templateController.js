@@ -121,7 +121,19 @@ export const getAllTemplates = async (req, res) => {
 
       const publicTemplates = await Template.findAll({
         where: { isPublic: true },
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt', 'DESC']],
+        include: [
+          {
+            model: User,
+            as: 'author',
+            attributes: ['id', 'name', 'email'],
+          },
+          {
+            model: User,
+            as: 'allowedUsers',
+            through: { attributes: [] },
+          },
+        ],
       });
 
       return res.json(publicTemplates);
