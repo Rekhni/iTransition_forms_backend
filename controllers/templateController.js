@@ -72,41 +72,50 @@ export const getAllTemplates = async (req, res) => {
             order: [['createdAt', 'DESC']],
             include: [
                 { model: User, as: 'allowedUsers', through: { attributes: [] } },
+                { model: User, as: 'author', attributes: ['id', 'name', 'email'] },
               ]
           });
         return res.json(templates);
       }
 
       if (userId) {
-        const templates = await Template.findAll({
+        const publicAndOwnTemplates = await Template.findAll({
             where: {
-                [Op.or]: [
-                    { isPublic: true },
-                    { userId },
-                ]
+              [Op.or]: [{ isPublic: true }, { userId }],
             },
             include: [
-                {
-                  model: User,
-                  as: 'allowedUsers',
-                  through: { attributes: [] },
-                },
-                {
-                    model: User,
-                    as: 'author', // this is needed to populate userId
-                    attributes: ['id', 'name', 'email']
-                }
-              ],
-            order: [['createdAt', 'DESC']]
-        });
+              { model: User, as: 'author', attributes: ['id', 'name', 'email'] },
+            ],
+            order: [['createdAt', 'DESC']],
+          });
+    
+          // Get templates shared with current user
+          const allowedTemplates = await Template.findAll({
+            include: [
+              {
+                model: User,
+                as: 'allowedUsers',
+                where: { id: userId },
+                required: true,
+                through: { attributes: [] },
+              },
+              { model: User, as: 'author', attributes: ['id', 'name', 'email'] },
+            ],
+            where: {
+              isPublic: false,
+            },
+            order: [['createdAt', 'DESC']],
+          });
+    
 
-        const visibleTemplates = templates.filter(t =>
-            t.isPublic || t.userId === userId || (t.allowedUsers ?? []).some(u => u.id === userId)
-          );
+        const mergedTemplates = [
+            ...publicAndOwnTemplates,
+            ...allowedTemplates.filter(
+              (t) => !publicAndOwnTemplates.some((pt) => pt.id === t.id)
+            ),
+          ];
 
-          return res.json(visibleTemplates);
-
-
+        return res.json(mergedTemplates);
       }
 
       const publicTemplates = await Template.findAll({
