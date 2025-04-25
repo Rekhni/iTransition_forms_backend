@@ -84,6 +84,7 @@ export const getAllTemplates = async (req, res) => {
               [Op.or]: [{ isPublic: true }, { userId }],
             },
             include: [
+              { model: User, as: 'allowedUsers', through: { attributes: [] }},
               { model: User, as: 'author', attributes: ['id', 'name', 'email'] },
             ],
             order: [['createdAt', 'DESC']],
