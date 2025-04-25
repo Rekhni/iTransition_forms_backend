@@ -10,7 +10,7 @@ router.post('/', protect, createTemplate);
 router.get('/mine', protect, getUserTemplates);
 router.get('/search', protect, searchTemplatesByTag);
 router.get('/:id', getTemplateById);
-router.get('/', protect, getAllTemplates); // for unauthenticated users
+router.get('/', getAllTemplates); // for unauthenticated users
 router.put('/:id', protect, updateTemplate);
 router.delete('/:id', protect, deleteTemplate);
 
