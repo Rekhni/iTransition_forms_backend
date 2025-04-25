@@ -96,7 +96,7 @@ export const getAllTemplates = async (req, res) => {
         });
 
         const visibleTemplates = templates.filter(t =>
-            t.isPublic || t.userId === userId || t.allowedUsers.some(u => u.id === userId)
+            t.isPublic || t.userId === userId || (t.allowedUsers ?? []).some(u => u.id === userId)
           );
 
           return res.json(visibleTemplates);
