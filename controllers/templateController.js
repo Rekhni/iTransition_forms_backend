@@ -90,6 +90,11 @@ export const getAllTemplates = async (req, res) => {
                   model: User,
                   as: 'allowedUsers',
                   through: { attributes: [] },
+                },
+                {
+                    model: User,
+                    as: 'author', // this is needed to populate userId
+                    attributes: ['id', 'name', 'email']
                 }
               ],
             order: [['createdAt', 'DESC']]

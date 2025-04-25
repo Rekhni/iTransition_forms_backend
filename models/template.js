@@ -27,6 +27,10 @@ const Template = sequelize.define('Template', {
     userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+            model: 'Users', // name of the target table
+            key: 'id',
+          }
     },
     isPublic: {
         type: DataTypes.BOOLEAN,
