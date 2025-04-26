@@ -64,8 +64,13 @@ export const getTemplateById = async (req, res) => {
 }
 
 export const getAllTemplates = async (req, res) => {
+    console.log("🔥 getAllTemplates called from", req.user?.email || "guest");
+
     try {
+      
       const userId = req.user?.id;
+
+      console.log('userId:', userId)
 
       const defaultInclude = [
         { model: User, as: 'allowedUsers', through: { attributes: [] } },
