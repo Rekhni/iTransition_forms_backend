@@ -105,6 +105,12 @@ export const getAllTemplates = async (req, res) => {
               { model: User, as: 'author', attributes: ['id', 'name', 'email'] },
             ],
           });
+
+          console.log("allowedTemplates:", allowedTemplates.map(t => ({
+            id: t.id,
+            title: t.title,
+            allowedUsers: t.allowedUsers.map(u => u.id)
+          })));
     
 
           const mergedTemplatesMap = new Map();
