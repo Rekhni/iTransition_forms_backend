@@ -79,10 +79,17 @@ export const getAllTemplates = async (req, res) => {
       }
 
       if (userId) {
-        const publicAndOwnTemplates = await Template.findAll({
-            where: {
-              [Op.or]: [{ isPublic: true }, { userId }],
-            },
+        const publicTemplates = await Template.findAll({
+            where: { isPublic: true },
+            include: [
+              { model: User, as: 'allowedUsers', through: { attributes: [] }},
+              { model: User, as: 'author', attributes: ['id', 'name', 'email'] },
+            ],
+            order: [['createdAt', 'DESC']],
+          });
+
+          const ownTemplates = await Template.findAll({
+            where: { userId },
             include: [
               { model: User, as: 'allowedUsers', through: { attributes: [] }},
               { model: User, as: 'author', attributes: ['id', 'name', 'email'] },
@@ -97,7 +104,7 @@ export const getAllTemplates = async (req, res) => {
                 model: User,
                 as: 'allowedUsers',
                 where: { id: userId },
-                required: false,
+                required: true,
                 through: { attributes: [] },
               },
               { model: User, as: 'author', attributes: ['id', 'name', 'email'] },
@@ -109,12 +116,12 @@ export const getAllTemplates = async (req, res) => {
           });
     
 
-        const mergedTemplates = [
-            ...publicAndOwnTemplates,
-            ...allowedTemplates.filter(
-              (t) => !publicAndOwnTemplates.some((pt) => pt.id === t.id)
-            ),
-          ];
+          const mergedTemplatesMap = new Map();
+          [...publicTemplates, ...ownTemplates, ...allowedTemplates].forEach(t => {
+            mergedTemplatesMap.set(t.id, t);
+          });
+    
+          const mergedTemplates = Array.from(mergedTemplatesMap.values());
 
         return res.json(mergedTemplates);
       }
