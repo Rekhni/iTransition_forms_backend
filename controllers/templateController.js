@@ -222,6 +222,10 @@ export const deleteTemplate = async (req, res) => {
 
         if (!template) return res.status(404).json({ msg: 'Template not found' });
 
+        if (template.userId !== user.id && user.role !== 'admin') {
+          return res.status(403).json({ msg: 'Not authorized to delete this template' });
+      }
+
         await template.destroy();
         res.json({ msg: 'Template deleted' });
         
