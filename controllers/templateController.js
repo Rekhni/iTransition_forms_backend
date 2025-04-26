@@ -67,13 +67,15 @@ export const getAllTemplates = async (req, res) => {
     try {
       const userId = req.user?.id;
 
+      const defaultInclude = [
+        { model: User, as: 'allowedUsers', through: { attributes: [] } },
+        { model: User, as: 'author', attributes: ['id', 'name', 'email'] },
+      ];
+
       if (req.user?.role === 'admin') {
         const templates = await Template.findAll({
             order: [['createdAt', 'DESC']],
-            include: [
-                { model: User, as: 'allowedUsers', through: { attributes: [] } },
-                { model: User, as: 'author', attributes: ['id', 'name', 'email'] },
-              ]
+            include: defaultInclude,
           });
         return res.json(templates);
       }
@@ -81,24 +83,17 @@ export const getAllTemplates = async (req, res) => {
       if (userId) {
         const publicTemplates = await Template.findAll({
             where: { isPublic: true },
-            include: [
-              { model: User, as: 'allowedUsers', through: { attributes: [] }},
-              { model: User, as: 'author', attributes: ['id', 'name', 'email'] },
-            ],
-            order: [['createdAt', 'DESC']],
+            include: defaultInclude,
           });
 
           const ownTemplates = await Template.findAll({
             where: { userId },
-            include: [
-              { model: User, as: 'allowedUsers', through: { attributes: [] }},
-              { model: User, as: 'author', attributes: ['id', 'name', 'email'] },
-            ],
-            order: [['createdAt', 'DESC']],
+            include: defaultInclude,
           });
     
           // Get templates shared with current user
           const allowedTemplates = await Template.findAll({
+            where: { isPublic: false },
             include: [
               {
                 model: User,
@@ -109,10 +104,6 @@ export const getAllTemplates = async (req, res) => {
               },
               { model: User, as: 'author', attributes: ['id', 'name', 'email'] },
             ],
-            where: {
-              isPublic: false,
-            },
-            order: [['createdAt', 'DESC']],
           });
     
 
@@ -129,18 +120,7 @@ export const getAllTemplates = async (req, res) => {
       const publicTemplates = await Template.findAll({
         where: { isPublic: true },
         order: [['createdAt', 'DESC']],
-        include: [
-          {
-            model: User,
-            as: 'author',
-            attributes: ['id', 'name', 'email'],
-          },
-          {
-            model: User,
-            as: 'allowedUsers',
-            through: { attributes: [] },
-          },
-        ],
+        include: defaultInclude,
       });
 
       return res.json(publicTemplates);
