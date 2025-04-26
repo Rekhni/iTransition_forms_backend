@@ -10,6 +10,8 @@ const TemplateAccess = sequelize.define('TemplateAccess', {
         type: DataTypes.INTEGER,
         allowNull: false
     }
+}, {
+    tableName: 'TemplateAccesses' // 👈 THIS LINE
 });
 
 export default TemplateAccess;
