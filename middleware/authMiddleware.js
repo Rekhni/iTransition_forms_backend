@@ -36,3 +36,21 @@ export const isAdmin = (req, res, next) => {
     next();
 };
 
+export const tryProtect = async (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return next(); // guest user
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await db.User.findByPk(decoded.id);
+
+        if (user && !user.isBlocked) {
+            req.user = user;
+        }
+    } catch (err) {
+        console.log("Optional auth failed:", err.message);
+    }
+
+    next();
+};
+
