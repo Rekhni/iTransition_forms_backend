@@ -70,7 +70,7 @@ export const toggleAdminStatus = async (req, res) => {
     try {   
         await User.update(
             {
-                role: literal(`CASE WHEN role = 'admin THEN 'user' ELSE 'admin' END`)
+                role: literal(`CASE WHEN role = 'admin' THEN 'user' ELSE 'admin' END`)
             },
             {
                 where: {
