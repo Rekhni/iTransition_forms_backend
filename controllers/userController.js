@@ -20,17 +20,9 @@ export const toggleBlockStatus = async (req, res) => {
 
     if (!Array.isArray(userIds)) return res.status(400).json({ msg: 'userIds must be an array' });
     try {
-        // const users = await User.findAll({
-        //     where: { id: userIds }
-        // });
-        // for (const user of users) {
-        //     user.isBlocked = !user.isBlocked;
-        //     await user.save();
-        // }  
-
         await User.update(
             {
-                isBlocked: literal(`NOT isBLocked`)
+                isBlocked: literal(`NOT isBlocked`)
             },
             {
                 where: {
