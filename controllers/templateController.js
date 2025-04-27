@@ -64,13 +64,9 @@ export const getTemplateById = async (req, res) => {
 }
 
 export const getAllTemplates = async (req, res) => {
-    console.log("🔥 getAllTemplates called from", req.user?.email || "guest");
-
     try {
       
       const userId = req.user?.id;
-
-      console.log('userId:', userId)
 
       const defaultInclude = [
         { model: User, as: 'allowedUsers', through: { attributes: [] } },
@@ -109,14 +105,7 @@ export const getAllTemplates = async (req, res) => {
               },
               { model: User, as: 'author', attributes: ['id', 'name', 'email'] },
             ],
-          });
-
-          console.log("allowedTemplates:", allowedTemplates.map(t => ({
-            id: t.id,
-            title: t.title,
-            allowedUsers: t.allowedUsers.map(u => u.id)
-          })));
-    
+          });    
 
           const mergedTemplatesMap = new Map();
           [...publicTemplates, ...ownTemplates, ...allowedTemplates].forEach(t => {
@@ -148,9 +137,6 @@ export const updateTemplate = async (req, res) => {
 
     try {
         const template = await Template.findByPk(id);
-
-        console.log("User trying to update:", req.user);
-        console.log("Template owner:", template.userId);
 
         if (!template) {
             return res.status(404).json({ msg: 'Template not found' })
