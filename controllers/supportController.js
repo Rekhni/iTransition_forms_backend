@@ -34,8 +34,9 @@ export const uploadSupportTicket = async (req, res) => {
     // Upload to OneDrive folder
     const folderName = process.env.MS_FOLDER_NAME || 'SupportTickets';
 
-    const response = await axios.post(
-      `https://graph.microsoft.com/v1.0/me/drive/root:/${folderName}/${form.getBoundary()}.json:/content`,
+    const filename = `support-ticket-${Date.now()}.json`;
+    const response = await axios.put(
+      `https://graph.microsoft.com/v1.0/drive/root:/${folderName}/${filename}:/content`,
       fileContent,
       {
         headers: {
