@@ -1,13 +1,13 @@
 import { uploadFileToDrive } from '../utils/googleDrive.js';
 
 export const uploadSupportTicketToGoogle = async (req, res) => {
-  const { summary, priority, pageUrl } = req.body;
+  const { summary, priority, pageUrl, userName } = req.body;
 
   if (!summary || !priority || !pageUrl)
     return res.status(400).json({ msg: 'Missing fields' });
 
   const ticketData = {
-    user: req.user.name,
+    userName,
     summary,
     priority,
     pageUrl,
