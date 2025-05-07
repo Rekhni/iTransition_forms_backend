@@ -7,6 +7,7 @@ export const uploadSupportTicketToGoogle = async (req, res) => {
     return res.status(400).json({ msg: 'Missing fields' });
 
   const ticketData = {
+    user: req.user.name,
     summary,
     priority,
     pageUrl,
