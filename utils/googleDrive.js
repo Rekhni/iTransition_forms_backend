@@ -13,12 +13,18 @@ const oauth2Client = new google.auth.OAuth2(
 const TOKEN_PATH = path.resolve('tokens.json');
 
 // Load saved tokens if they exist
-if (fs.existsSync(TOKEN_PATH)) {
-  const raw = fs.readFileSync(TOKEN_PATH);
-  const savedTokens = JSON.parse(raw);
-  oauth2Client.setCredentials(savedTokens);
-  console.log('✅ Google credentials loaded from tokens.json');
-}
+
+export const loadSavedCredentials = () => {
+  if (fs.existsSync(TOKEN_PATH)) {
+    const raw = fs.readFileSync(TOKEN_PATH);
+    const tokens = JSON.parse(raw);
+    oauth2Client.setCredentials(tokens);
+    savedCredentials = tokens;
+    console.log('✅ Loaded saved Google Drive credentials');
+  } else {
+    console.warn('⚠️ No saved Google Drive credentials found');
+  }
+};
 
 export const setGoogleDriveCredentials = (tokens) => {
   oauth2Client.setCredentials(tokens);

@@ -16,11 +16,13 @@ import { loadSavedCredentials } from './utils/googleDrive.js';
 
 dotenv.config();
 
-loadSavedCredentials();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+loadSavedCredentials();
+
 
 app.use('/api/auth', authRoutes);
 app.use('/api/templates', templateRoutes);
