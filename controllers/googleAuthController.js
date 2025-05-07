@@ -29,10 +29,10 @@ export const googleCallback = async (req, res) => {
     const { tokens } = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
 
-    GOOGLE_DRIVE_ACCESS_TOKEN = tokens.access_token;
+    global.GOOGLE_DRIVE_TOKENS = tokens;
 
     // Store tokens securely for future use (DB, session, etc.)
-    console.log('Tokens:', tokens);
+    console.log('Google tokens:', tokens);
 
     res.send('Authorization successful. You can close this window.');
   } catch (err) {

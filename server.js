@@ -11,9 +11,12 @@ import commentRoutes from './routes/comment.js'
 import userRoutes from './routes/user.js';
 import supportRoutes from './routes/support.js';
 import googleAuthRoutes from './routes/googleAuth.js';
+import { loadSavedCredentials } from './utils/googleDrive.js';
 
 
 dotenv.config();
+
+loadSavedCredentials();
 
 const app = express();
 app.use(cors());
