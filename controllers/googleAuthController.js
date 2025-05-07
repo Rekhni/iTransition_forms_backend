@@ -1,14 +1,16 @@
 // controllers/googleAuthController.js
-
 import { google } from 'googleapis';
-
-let GOOGLE_DRIVE_ACCESS_TOKEN = null;
+import fs from 'fs';
+import path from 'path';
+import { setGoogleDriveCredentials } from '../utils/googleDrive.js';
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
   process.env.GOOGLE_REDIRECT_URI
 );
+
+const TOKEN_PATH = path.resolve('tokens.json');
 
 export const getGoogleAuthURL = (req, res) => {
   const url = oauth2Client.generateAuthUrl({
@@ -22,21 +24,20 @@ export const getGoogleAuthURL = (req, res) => {
 
 export const googleCallback = async (req, res) => {
   const { code } = req.query;
-
   if (!code) return res.status(400).send('Missing code');
 
   try {
     const { tokens } = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
 
-    global.GOOGLE_DRIVE_TOKENS = tokens;
+    // Persist the token
+    fs.writeFileSync(TOKEN_PATH, JSON.stringify(tokens, null, 2));
+    setGoogleDriveCredentials(tokens); // update runtime client too
 
-    // Store tokens securely for future use (DB, session, etc.)
-    console.log('Google tokens:', tokens);
-
-    res.send('Authorization successful. You can close this window.');
+    console.log('✅ Google tokens saved to tokens.json');
+    res.send('✅ Authorization successful. You can close this window.');
   } catch (err) {
-    console.error('Error exchanging code for tokens:', err.message);
+    console.error('❌ Token exchange error:', err.message);
     res.status(500).send('Failed to authorize');
   }
 };
