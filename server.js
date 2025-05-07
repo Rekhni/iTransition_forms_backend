@@ -9,6 +9,7 @@ import formRoutes from './routes/form.js';
 import likeRoutes from './routes/like.js';
 import commentRoutes from './routes/comment.js'
 import userRoutes from './routes/user.js';
+import supportRoutes from './routes/support.js';
 
 dotenv.config();
 
@@ -23,7 +24,7 @@ app.use('/api/forms', formRoutes);
 app.use('/api/likes', likeRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/users', userRoutes);
-
+app.use('/api/support', supportRoutes);
 
 const PORT = process.env.PORT || 5002;
 
