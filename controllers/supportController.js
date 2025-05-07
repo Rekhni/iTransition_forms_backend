@@ -36,7 +36,7 @@ export const uploadSupportTicket = async (req, res) => {
 
     const filename = `support-ticket-${Date.now()}.json`;
     const response = await axios.put(
-      `https://graph.microsoft.com/v1.0/drive/root:/${folderName}/${filename}:/content`,
+      `https://graph.microsoft.com/v1.0/users/${process.env.MS_UPLOAD_USER}/drive/root:/${folderName}/${filename}:/content`,
       fileContent,
       {
         headers: {
