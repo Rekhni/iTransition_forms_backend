@@ -1,58 +1,25 @@
-import { getMicrosoftAccessToken } from '../utils/microsoftGraph.js';
-import axios from 'axios';
-import FormData from 'form-data';
+import { uploadFileToDrive } from '../utils/googleDrive.js';
 
-export const uploadSupportTicket = async (req, res) => {
-  const { summary, priority, templateTitle, pageUrl } = req.body;
+export const uploadSupportTicketToGoogle = async (req, res) => {
+  const { summary, priority, pageUrl } = req.body;
 
-  if (!summary || !priority || !pageUrl) {
-    return res.status(400).json({ msg: 'Missing fields in support ticket' });
-  }
+  if (!summary || !priority || !pageUrl)
+    return res.status(400).json({ msg: 'Missing fields' });
+
+  const ticketData = {
+    summary,
+    priority,
+    pageUrl,
+    submittedAt: new Date().toISOString(),
+  };
+
+  const fileName = `support-ticket-${Date.now()}.json`;
 
   try {
-    const user = req.user;
-
-    const ticketData = {
-      reportedBy: { id: user.id, name: user.name, email: user.email },
-      template: templateTitle || null,
-      link: pageUrl,
-      priority,
-      summary,
-      timestamp: new Date().toISOString()
-    };
-
-    // const fileContent = Buffer.from(JSON.stringify(ticketData, null, 2));
-
-    const fileContent = Buffer.from("Test upload from backend");
-
-    const form = new FormData();
-    form.append('file', fileContent, {
-      filename: `support-ticket-${Date.now()}.json`,
-      contentType: 'application/json'
-    });
-
-    const accessToken = await getMicrosoftAccessToken();
-
-    console.log('Access token (length):', accessToken?.length)
-
-    // Upload to OneDrive folder
-    const folderName = process.env.MS_FOLDER_NAME || 'SupportTickets';
-
-    const filename = `support-ticket-${Date.now()}.json`;
-    const response = await axios.put(
-      `https://graph.microsoft.com/v1.0/drive/root:/${folderName}/${filename}:/content`,
-      fileContent,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-
-    res.status(200).json({ msg: 'Support ticket uploaded', url: response.data.webUrl });
+    const file = await uploadFileToDrive(fileName, JSON.stringify(ticketData, null, 2));
+    res.json({ msg: 'Uploaded successfully', fileLink: file.webViewLink });
   } catch (err) {
-    console.error('Upload failed:', err.response?.data || err.message);
-    res.status(500).json({ msg: 'Failed to upload support ticket', detail: err?.response?.data });
+    console.error('Google Drive upload failed:', err.message);
+    res.status(500).json({ msg: 'Upload failed' });
   }
 };

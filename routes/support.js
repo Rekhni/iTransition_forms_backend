@@ -1,9 +1,8 @@
 import express from 'express';
-import { uploadSupportTicket } from '../controllers/supportController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import { uploadSupportTicketToGoogle } from '../controllers/supportController.js';
 
 const router = express.Router();
 
-router.post('/upload', protect, uploadSupportTicket);
+router.post('/upload', uploadSupportTicketToGoogle);
 
 export default router;

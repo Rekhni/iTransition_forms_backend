@@ -10,6 +10,8 @@ import likeRoutes from './routes/like.js';
 import commentRoutes from './routes/comment.js'
 import userRoutes from './routes/user.js';
 import supportRoutes from './routes/support.js';
+import googleAuthRoutes from './routes/googleAuth.js';
+
 
 dotenv.config();
 
@@ -25,6 +27,7 @@ app.use('/api/likes', likeRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/support', supportRoutes);
+app.use('/auth', googleAuthRoutes);
 
 const PORT = process.env.PORT || 5002;
 
