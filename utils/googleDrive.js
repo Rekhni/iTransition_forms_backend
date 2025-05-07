@@ -13,6 +13,8 @@ const oauth2Client = new google.auth.OAuth2(
 const TOKEN_PATH = path.resolve('tokens.json');
 
 // Load saved tokens if they exist
+let savedCredentials = null;
+
 
 export const loadSavedCredentials = () => {
   if (fs.existsSync(TOKEN_PATH)) {
