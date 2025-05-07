@@ -21,7 +21,9 @@ export const uploadSupportTicket = async (req, res) => {
       timestamp: new Date().toISOString()
     };
 
-    const fileContent = Buffer.from(JSON.stringify(ticketData, null, 2));
+    // const fileContent = Buffer.from(JSON.stringify(ticketData, null, 2));
+
+    const fileContent = Buffer.from("Test upload from backend");
 
     const form = new FormData();
     form.append('file', fileContent, {
@@ -30,6 +32,8 @@ export const uploadSupportTicket = async (req, res) => {
     });
 
     const accessToken = await getMicrosoftAccessToken();
+
+    console.log('Access token (length):', accessToken?.length)
 
     // Upload to OneDrive folder
     const folderName = process.env.MS_FOLDER_NAME || 'SupportTickets';
@@ -49,6 +53,6 @@ export const uploadSupportTicket = async (req, res) => {
     res.status(200).json({ msg: 'Support ticket uploaded', url: response.data.webUrl });
   } catch (err) {
     console.error('Upload failed:', err.response?.data || err.message);
-    res.status(500).json({ msg: 'Failed to upload support ticket' });
+    res.status(500).json({ msg: 'Failed to upload support ticket', detail: err?.response?.data });
   }
 };
