@@ -15,6 +15,8 @@ import userRoutes from './routes/user.js';
 import supportRoutes from './routes/support.js';
 import googleAuthRoutes from './routes/googleAuth.js';
 import { loadSavedCredentials } from './utils/googleDrive.js';
+import salesforceRoutes from './routes/salesforce.js';
+import salesforceAuthRoutes from './routes/salesforceAuth.js';
 
 
 dotenv.config();
@@ -47,6 +49,8 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/auth', googleAuthRoutes);
+app.use('/api/salesforce', salesforceRoutes);
+app.use('/api/sf', salesforceAuthRoutes);
 
 const PORT = process.env.PORT || 5002;
 
