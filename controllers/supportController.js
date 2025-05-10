@@ -14,6 +14,9 @@ export const uploadSupportTicketToGoogle = async (req, res) => {
     submittedAt: new Date().toISOString(),
   };
 
+  const io = req.app.get('io');
+  io.emit('new_ticket', ticketData);
+
   const fileName = `support-ticket-${Date.now()}.json`;
 
   try {

@@ -1,6 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import http from 'http';
+import { Server } from 'socket.io';
+
 import db from './models/index.js';
 import authRoutes from './routes/auth.js';
 import templateRoutes from './routes/template.js';
@@ -18,6 +21,17 @@ dotenv.config();
 
 
 const app = express();
+const server = http.createServer(app);
+
+const io = new Server(server, {
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST']
+    }
+});
+
+app.set('io', io);
+
 app.use(cors());
 app.use(express.json());
 
@@ -38,5 +52,5 @@ const PORT = process.env.PORT || 5002;
 
 
 db.sequelize.sync().then(() => {
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }).catch(err => console.error('DB connection failed:', err));
