@@ -50,7 +50,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/auth', googleAuthRoutes);
 app.use('/api/salesforce', salesforceRoutes);
-app.use('/api/sf', salesforceAuthRoutes);
+app.use('/auth/sf', salesforceAuthRoutes);
 
 const PORT = process.env.PORT || 5002;
 
