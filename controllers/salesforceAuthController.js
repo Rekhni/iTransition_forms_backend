@@ -24,7 +24,7 @@ export const salesforceCallback = async (req, res) => {
     });
 
     console.log('Salesforce tokens:', data);
-    res.redirect(`http://localhost:5173/sf-callback?access_token=${data.access_token}&instance_url=${data.instance_url}`);
+    res.redirect(`https://customizable-forms-app.onrender.com/sf-callback?access_token=${data.access_token}&instance_url=${data.instance_url}`);
   } catch (err) {
     console.error('Salesforce auth error:', err.response?.data || err.message);
     res.status(500).send('Salesforce authorization failed');
