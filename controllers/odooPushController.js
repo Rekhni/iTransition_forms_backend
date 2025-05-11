@@ -64,7 +64,7 @@ export const pushToOdoo = async (req, res) => {
     const templates = await Template.findAll({
       where: { authorId: user.id },
       include: [
-        { model: Question },
+        { model: Question, as: 'Questions' },
         { model: Form, include: [Answer] },
       ],
     });
