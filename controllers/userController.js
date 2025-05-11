@@ -3,6 +3,25 @@ import { Op, literal } from 'sequelize';
 
 const User = db.User;
 
+export const getApiToken = async (req, res) => {
+    try {
+      const userId = req.user?.id;
+      const user = await User.findByPk(userId);
+  
+      if (!user) return res.status(404).json({ msg: "User not found" });
+  
+      if (!user.apiToken) {
+        user.apiToken = crypto.randomBytes(32).toString('hex');
+        await user.save();
+      }
+  
+      res.json({ token: user.apiToken });
+    } catch (err) {
+      console.error("Error generating token:", err);
+      res.status(500).json({ msg: "Failed to generate API token" });
+    }
+  };
+
 export const getAllUsers = async (req, res) => {
     try {
         const users = await User.findAll({

@@ -17,6 +17,7 @@ import googleAuthRoutes from './routes/googleAuth.js';
 import { loadSavedCredentials } from './utils/googleDrive.js';
 import salesforceRoutes from './routes/salesforce.js';
 import salesforceAuthRoutes from './routes/salesforceAuth.js';
+import odooRoutes from './routes/odoo.js';
 
 
 dotenv.config();
@@ -51,6 +52,7 @@ app.use('/api/support', supportRoutes);
 app.use('/auth', googleAuthRoutes);
 app.use('/api/salesforce', salesforceRoutes);
 app.use('/auth/sf', salesforceAuthRoutes);
+app.use('/api/odoo', odooRoutes);
 
 const PORT = process.env.PORT || 5002;
 

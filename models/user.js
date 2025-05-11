@@ -21,6 +21,11 @@ const User = sequelize.define('User', {
     isBlocked: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
+    },
+    apiToken: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: true
     }
 });
 
