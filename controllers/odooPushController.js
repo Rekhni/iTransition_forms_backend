@@ -62,7 +62,7 @@ export const pushToOdoo = async (req, res) => {
     if (!user) return res.status(403).json({ error: 'Invalid token' });
 
     const templates = await Template.findAll({
-      where: { authorId: user.id },
+      where: { userId: user.id },
       include: [
         { model: Question, as: 'questions' },
         { model: Form, include: [{ model: Answer, as: 'answers'}] },
