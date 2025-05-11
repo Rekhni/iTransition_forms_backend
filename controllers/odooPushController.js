@@ -64,7 +64,7 @@ export const pushToOdoo = async (req, res) => {
     const templates = await Template.findAll({
       where: { authorId: user.id },
       include: [
-        { model: Question, as: 'Questions' },
+        { model: Question, as: 'questions' },
         { model: Form, include: [Answer] },
       ],
     });
@@ -72,7 +72,7 @@ export const pushToOdoo = async (req, res) => {
     const aggregated = templates.map((template) => ({
       title: template.title,
       author: { name: user.name },
-      questions: template.Questions.map((q) => {
+      questions: template.questions.map((q) => {
         const values = template.Forms.flatMap((f) =>
           f.Answers.filter((a) => a.questionId === q.id).map((a) => a.value)
         );
