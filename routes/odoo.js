@@ -1,7 +1,7 @@
 import express from 'express';
-import { getAggregatedTemplates } from '../controllers/odooController.js';
+import { pushToOdoo } from '../controllers/odooPushController.js';
 
 const router = express.Router();
-router.get('/aggregated-templates', getAggregatedTemplates);
+router.get('/push', pushToOdoo);
 
 export default router;
