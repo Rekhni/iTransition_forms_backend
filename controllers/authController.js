@@ -17,7 +17,8 @@ export const register = async (req, res) => {
         const newUser = await User.create({
             name,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            apiToken: crypto.randomBytes(32).toString('hex') 
         });
 
         res.status(201).json({ msg: 'User registered successfully', newUser});
